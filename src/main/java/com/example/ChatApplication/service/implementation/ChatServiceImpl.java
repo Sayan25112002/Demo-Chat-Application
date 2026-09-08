@@ -27,7 +27,7 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public ChatMessageResponseDto addUser(ChatMessageRequestDto chatMessageRequestDto, SimpMessageHeaderAccessor headerAccessor) {
-        headerAccessor.getSessionAttributes().put("username", headerAccessor.getSessionAttributes().get("username"));
+        headerAccessor.getSessionAttributes().put("userName", chatMessageRequestDto.getSender());
         return chatMapper.toChatMessageResponseDto(chatRepository.save(chatMapper.toChatMessage(chatMessageRequestDto)));
     }
 }
