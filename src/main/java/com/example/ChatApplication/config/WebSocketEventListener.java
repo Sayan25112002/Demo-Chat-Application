@@ -1,7 +1,10 @@
 package com.example.ChatApplication.config;
 
 import com.example.ChatApplication.dto.requestDto.ChatMessageRequestDto;
+import com.example.ChatApplication.entity.ChatMessage;
 import com.example.ChatApplication.entity.ennum.MessageType;
+import com.example.ChatApplication.mapper.ChatMapper;
+import com.example.ChatApplication.repository.ChatRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -16,6 +19,8 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 public class WebSocketEventListener {
 
     private final SimpMessageSendingOperations messagingTemplate;
+    private final ChatMapper chatMapper;
+    private final ChatRepository chatRepository;
 
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
@@ -27,6 +32,8 @@ public class WebSocketEventListener {
                     .type(MessageType.LEAVE)
                     .sender(userName)
                     .build();
+            ChatMessage chatMessage = chatMapper.toChatMessage(chatMessageRequestDto);
+            chatRepository.save(chatMessage);
             messagingTemplate.convertAndSend("/topic/public", chatMessageRequestDto);
 
         }
